@@ -6,7 +6,9 @@ import style from './style';
 import {useSelector} from 'react-redux';
 import Button from '../../components/Button/Button';
 import {
+  CardForm,
   StripeProvider,
+  presentPaymentSheet,
   useConfirmPayment,
   usePaymentSheet,
 } from '@stripe/stripe-react-native';
@@ -22,13 +24,13 @@ const Payments = () => {
   }, []);
 
   const initialisePaymentSheet = async () => {
-    const {paymentIntent, ephemeralKey, customer} =
+    const {setupIntent, ephemeralKey, customer} =
       await fetchPaymentSheetParams();
 
     const {error} = await initPaymentSheet({
       customerId: customer,
       customerEphemeralKeySecret: ephemeralKey,
-      paymentIntentClientSecret: paymentIntent,
+      setupIntentClientSecret: setupIntent,
       merchantDisplayName: 'Example Inc.',
       allowsDelayedPaymentMethods: true,
       returnURL: 'stripe-example://stripe-redirect',
@@ -42,17 +44,20 @@ const Payments = () => {
   };
 
   const fetchPaymentSheetParams = async () => {
-    const response = await fetch('http://192.168.100.68:3000/payment-sheet', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      'http://192.168.100.68:3000/payment-sheet-setup-intent-subscription',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
 
-    const {paymentIntent, ephemeralKey, customer} = await response.json();
-    console.log([paymentIntent, ephemeralKey, customer]);
+    const {setupIntent, ephemeralKey, customer} = await response.json();
+    console.log([setupIntent, ephemeralKey, customer]);
 
-    return {paymentIntent, ephemeralKey, customer};
+    return {setupIntent, ephemeralKey, customer};
   };
 
   const donationInformation = useSelector(
