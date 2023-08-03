@@ -1,13 +1,25 @@
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
 import store from '../redux/store';
 import {updateToken} from '../redux/reducers/User';
+import sendVerificationEmail from './sendEmail';
 
 export const createUser = async (fullName, email, password) => {
   try {
     const user = await auth().createUserWithEmailAndPassword(email, password);
     await user.user.updateProfile({displayName: fullName});
+    await firestore().collection('users').add({
+      name: fullName,
+      email,
+      role: 'user',
+    });
+
+    await sendVerificationEmail(email);
+    // await auth().currentUser.sendEmailVerification();
     return user;
   } catch (error) {
+    console.log(error);
     if (error.code === 'auth/email-already-in-use') {
       return {error: 'That email address is already in use!'};
     } else if (error.code === 'auth/invalid-email') {
@@ -19,13 +31,17 @@ export const createUser = async (fullName, email, password) => {
 
 export const loginUser = async (email, password) => {
   try {
-    const response = await auth().signInWithEmailAndPassword(email, password);
-    const token = await response.user.getIdToken();
+    const {user} = await auth().signInWithEmailAndPassword(email, password);
+    if (!user.emailVerified) {
+      return {status: false, error: 'Para poder entrar debe validar su email'};
+    }
+
+    const token = await user.getIdToken();
     return {
       status: true,
       data: {
-        displayName: response.user.displayName,
-        email: response.user.email,
+        displayName: user.displayName,
+        email: user.email,
         token,
       },
     };
