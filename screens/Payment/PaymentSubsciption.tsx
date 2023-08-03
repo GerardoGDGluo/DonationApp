@@ -45,7 +45,7 @@ const Payments = () => {
 
   const fetchPaymentSheetParams = async () => {
     const response = await fetch(
-      'http://192.168.100.68:3000/payment-sheet-setup-intent-subscription',
+      'https://us-central1-sripepaymentid.cloudfunctions.net/stirpePayment/payment-sheet-setup-intent-subscription',
       {
         method: 'POST',
         headers: {
