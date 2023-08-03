@@ -11,15 +11,24 @@ import {
   usePaymentSheet,
 } from '@stripe/stripe-react-native';
 import {useNavigation} from '@react-navigation/native';
+import BackButton from '../../components/BackButton/BackButton';
 
 const Payments = () => {
   const [ready, setReady] = useState(false);
   const {initPaymentSheet, presentPaymentSheet, loadingPaymentSheet} =
     usePaymentSheet();
 
+  const donationInformation = useSelector(
+    state => state.donations.selectedDonationInformation,
+  );
+  const user = useSelector(state => state.user);
+  const navigation = useNavigation();
+
   useEffect(() => {
     initialisePaymentSheet();
   }, []);
+
+  console.log(user.email);
 
   const initialisePaymentSheet = async () => {
     const {paymentIntent, ephemeralKey, customer} =
@@ -42,24 +51,24 @@ const Payments = () => {
   };
 
   const fetchPaymentSheetParams = async () => {
-    const response = await fetch('http://192.168.100.68:3000/payment-sheet', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      'https://us-central1-sripepaymentid.cloudfunctions.net/stirpePayment/payment-sheet',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user.email,
+        }),
       },
-    });
+    );
 
     const {paymentIntent, ephemeralKey, customer} = await response.json();
     console.log([paymentIntent, ephemeralKey, customer]);
 
     return {paymentIntent, ephemeralKey, customer};
   };
-
-  const donationInformation = useSelector(
-    state => state.donations.selectedDonationInformation,
-  );
-  const user = useSelector(state => state.user);
-  const navigation = useNavigation();
 
   async function buy() {
     const {error} = await presentPaymentSheet();
@@ -76,6 +85,7 @@ const Payments = () => {
   return (
     <SafeAreaView style={[globalStyles.backgroundWhite, globalStyles.flex]}>
       <ScrollView contentContainerStyle={style.paymentContainer}>
+        <BackButton onPress={() => navigation.goBack()} />
         <Header title="Making Donation" />
         <Text style={style.donationAmountDescription}>
           You are about to donate {donationInformation.price}
