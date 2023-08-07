@@ -28,7 +28,22 @@ const SingleDonationItem = ({route}) => {
           <Badge title={categoryInformation.name} />
         </View>
 
-        <Header type="h1" title={donationInformation.name} />
+        <Header
+          type="h1"
+          title={
+            'Ahereas disregard and contempt for human rights have resulted'
+          }
+        />
+        <Header
+          type="h2"
+          title={
+            'Whereas disregard and contempt for human rights have resulted'
+          }
+        />
+
+        <Text className="font-[Montserrat]  mx-3">
+          {donationInformation.description}
+        </Text>
         <Text style={style.description}>{donationInformation.description}</Text>
         <Text style={style.description}>{donationInformation.description}</Text>
         <Text style={style.description}>{donationInformation.description}</Text>

@@ -9,13 +9,13 @@ const style = StyleSheet.create({
     fontWeight: '600',
   },
   header2: {
-    fontFamily: 'Inter',
-    fontSize: scaleFontSize(18),
-    lineHeight: scaleFontSize(22),
+    fontFamily: 'Monteserrat',
+    fontSize: scaleFontSize(24),
+    lineHeight: scaleFontSize(29),
     fontWeight: '600',
   },
   header3: {
-    fontFamily: 'Inter',
+    fontFamily: 'Monteserrat',
     fontSize: scaleFontSize(16),
     lineHeight: scaleFontSize(19),
     fontWeight: '600',
